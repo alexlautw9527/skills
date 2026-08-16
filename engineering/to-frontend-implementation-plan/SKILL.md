@@ -8,7 +8,7 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 - Current State：Entry points、Existing flow、Existing patterns、Constraints（狀態歸屬、workspace 邊界等限制）。每項先說明運作方式或責任，再於下一層列出 path、route、symbol 或設定依據
 - Slice：每個 Slice 標明對應的 story，含 Outcome、Changes、Data flow、Validation。每項 Outcome 都要附上功能 spec 來源；spec 有提供設計稿時，附上對應此 Slice 的設計稿連結；Slice 排列順序即實作順序
 - Shared Changes：跨 Slice 共用修改
-- 檔案變更總覽：使用 `[DELETE]`、`[UPDATE]`、`[CREATE]` 標明本次刪除、修改與新增的全部檔案
+- 檔案變更總覽：使用 `[DELETE]`、`[UPDATE]`、`[CREATE]` 標明本次刪除、修改與新增的全部檔案；檔案集合、路徑與變更狀態必須與全部 Slice 的 Changes 及 Shared Changes 完全相同
 - Story 覆蓋對照表：列出 PRD 全部 story，並以 Markdown 連結指向覆蓋它的 Slice
 - Final Validation：含 PRD 所有 story（需求單元）的覆蓋檢查
 
@@ -102,8 +102,14 @@ Current State 使用「概覽 → 實際位置或流程步驟 → 證據」的�
 
 ### 4. 切分可驗證行為
 
-1. 整理完整行為鏈時，依據 spec 的 acceptance criteria、使用流程與系統可觀察狀態。覆蓋關係由每個 Slice 標題的 story 對應直接呈現，不在計畫重述 spec 內容。Validation 欄位只寫驗證方式，不複製 acceptance criteria 原文。spec 的 acceptance criteria 有穩定 ID（例如 AC-001）時，直接引用該 ID；沒有穩定 ID 時，把 criteria 改寫成具體可執行的驗證步驟。
-2. 每項 Outcome 都要附上支持該結果的功能 spec 來源。優先引用穩定的 story ID、acceptance criteria ID 或 UI spec ID；沒有穩定 ID 時，連結到使用者提供或 repository 內的 spec 小節。來源只建立可追查關係，不在 Outcome 重抄需求內容。
+1. 整理完整行為鏈時，依據 spec 的 acceptance criteria、使用流程與系統可觀察狀態。
+    - 覆蓋關係由每個 Slice 標題的 story 對應直接呈現，不在計畫重述 spec 內容。
+    - Validation 欄位只寫驗證方式，不複製 acceptance criteria 原文。spec 的 acceptance criteria 有穩定 ID（例如 AC-001）時，直接引用該 ID；沒有穩定 ID 時，把 criteria 改寫成具體可執行的驗證步驟。
+    - Validation 區塊若分別驗證兩個以上可獨立檢查的單位，例如多個 UI 狀態、story 或 route，將每個單位拆成獨立 bullet，並至少列出一個對應的驗證檔案。
+2. 每項 Outcome 都要附上支持該結果的功能 spec 來源。
+    - 優先引用穩定的 story ID、acceptance criteria ID 或 UI spec ID；沒有穩定 ID 時，連結到使用者提供或 repository 內的 spec 小節。
+    - 來源只建立可追查關係，不在 Outcome 重抄需求內容。
+    - Outcome 區塊若分別描述兩個以上可獨立理解的單位，將每個單位拆成獨立 bullet，並至少列出一個承擔該結果的實作檔案。
 3. 依可觀察行為切成 Slice。每個 Slice 貫穿 UI、state、資料存取與 API，包含完成該行為所需的跨 workspace 修改與測試。
 4. 讓每個 Slice 完成時都能獨立實作、驗證與 review。若結果只能等其他 Slice 完成後觀察，合併 Slice 或重新選擇邊界。
 5. 依可以安全交付與驗證的順序排列 Slice。package boundary 不構成 Slice 邊界；同一 Slice 可以修改多個 workspace。
@@ -118,13 +124,28 @@ Current State 使用「概覽 → 實際位置或流程步驟 → 證據」的�
 
 使用 repository 中可確認的實際路徑、module、symbol 與指令。預計新增的檔案尚不存在時，參考相鄰既有實作與該目錄在專案中負責的職責，提出路徑，並說明新檔案承擔的責任。
 
-Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
+Outcome 或 Validation 區塊若包含兩個以上可獨立理解或驗證的單位，使用下列格式：
 
+- 每個單位使用獨立 bullet，不得只寫「逐一驗證所有 UI」或「覆蓋所有 story」等無法判斷實際位置的概括描述。
+- Outcome 的每個單位至少列出一個 `相關檔案：`，指向承擔該結果的實作檔案。該檔案必須出現在同一 Slice 的 Changes 或 Shared Changes。
+- Validation 的每個單位至少列出一個 `驗證檔案：`。優先指向預計新增或修改的測試檔案；repository 沒有對應測試層級時，指向實際受驗證的實作或設定檔案，並同時寫出指令或具體驗證步驟。
+- Outcome 與 Validation 引用預計新增或修改的檔案時，檔案路徑與變更狀態必須與 Changes、Shared Changes 及檔案變更總覽一致。
+
+Changes 寫到具體檔案層級，並說明每個變更承擔的責任：
+
+- 每個檔案路徑前使用 `[DELETE]`、`[UPDATE]` 或 `[CREATE]` 標明變更狀態。不得只寫 module、package、contract 或其他無法與檔案變更總覽逐項核對的範圍。
 - 寫清楚哪個既有責任會擴充、資料如何接入，以及選擇該位置的 repository 依據。
 - 元件以檔案層級記錄：新增或擴充哪個元件、它與誰互動。不寫 props 設計與元件內部拆分。
 - 不寫逐行程式碼、行號、完整函式內容或未經查證的介面。
 - 不使用 `Update state` 這類無法判斷修改位置與結果的描述。
 - 同一項修改同時支援多個 Slice 時，放入 Shared Changes；只服務單一 Slice 時，留在該 Slice。
+
+完成全部 Slice 與 Shared Changes 後，再寫檔案變更總覽，並進行雙向核對：
+
+- Changes 與 Shared Changes 列出的每個檔案，都必須出現在檔案變更總覽。
+- 檔案變更總覽列出的每個檔案，都必須能在某個 Slice 的 Changes 或 Shared Changes 找到。
+- 同一檔案在兩處的路徑與 `[DELETE]`、`[UPDATE]`、`[CREATE]` 狀態必須相同。
+- 同一檔案若由多個 Slice 修改，可以出現在多個 Changes，但檔案變更總覽只列一次，而且所有出現位置都必須使用相同狀態。
 
 依下列模板輸出。檔案路徑、module、symbol、workspace、package、指令、設定值，以及穩定的 story 或 acceptance criteria ID 使用 inline backtick；自然語言敘述不使用 inline backtick：
 
@@ -177,10 +198,11 @@ Slice 依實作順序從 1 開始編號。調整 Slice 順序時，重新編號�
 
 - <完成後可以觀察到什麼>
   - 來源：`<story-or-acceptance-criteria-ID>`、[<UI spec 或其他功能 spec 小節>](<spec-url-or-relative-path>)
+  - `相關檔案：` `<path>`（Outcome 區塊含兩個以上可獨立單位時，每個單位都要列出）
 
 **Changes**
 
-- `<path or module>`
+- `[UPDATE] <path>`
   - <修改什麼，以及必要時說明為什麼在這裡改>
 
 **Data flow**
@@ -194,6 +216,7 @@ Slice 依實作順序從 1 開始編號。調整 Slice 順序時，重新編號�
 **Validation**
 
 - <test 或明確驗證方式；test、symbol 或指令使用 inline backtick>
+  - `驗證檔案：` `<path>`（Validation 區塊含兩個以上可獨立單位時，每個單位都要列出）
 
 ...
 
@@ -201,14 +224,14 @@ Slice 依實作順序從 1 開始編號。調整 Slice 順序時，重新編號�
 
 只放多個 Slice 都依賴、無法合理歸屬單一 Slice 的共用修改。
 
-- `<shared package / contract / primitive>`
+- `[UPDATE] <path>`
   - <修改內容與原因>
 
 沒有則寫 `None`。
 
 ## 檔案變更總覽
 
-將全部 Slice 與 Shared Changes 的檔案彙整成 tree，依 workspace 與目錄排列。每個檔案路徑前使用下列固定標記：
+將全部 Slice 與 Shared Changes 的檔案去重後彙整成 tree，依 workspace 與目錄排列。總覽與 Changes 及 Shared Changes 的檔案集合必須完全相同，每個檔案的變更狀態也必須一致。每個檔案路徑前使用下列固定標記：
 
 - `[DELETE]`：刪除既有檔案。
 - `[UPDATE]`：修改既有檔案。
@@ -256,15 +279,19 @@ Slice 依實作順序從 1 開始編號。調整 Slice 順序時，重新編號�
 - Slice
     - 每個 Slice 有單一可觀察 Outcome、完整 Data flow、可立即執行的 Validation。
     - 每項 Outcome 都附上可追查的功能 spec 來源；來源使用穩定 ID 或連結，不以 repository 實作位置代替需求來源。
+    - Outcome 或 Validation 區塊若含兩個以上可獨立單位，每個單位都使用獨立 bullet；Outcome 列出至少一個相關實作檔案，Validation 列出至少一個測試或實際受驗證的檔案。
+    - Outcome 與 Validation 引用預計新增或修改的檔案時，路徑與變更狀態與 Changes、Shared Changes 及檔案變更總覽一致。
     - 每個 Slice 標明對應 story，並依實作順序連續編號；Slice 標題與 Story 覆蓋對照表使用相同編號。
     - 每個 Slice 在 spec 提供對應設計稿時附上連結；spec 未提供時整個 Design 小節省略，不自行猜測或編造 URL。
+    - Changes 的每個項目都列出具體檔案，並使用 `[DELETE]`、`[UPDATE]` 或 `[CREATE]` 標明變更狀態。
 - Story 覆蓋
     - 每個 story 都有對應的 Slice（無對應者標明排除理由），與 Story 覆蓋對照表一致。
     - Story 覆蓋對照表中的每個 Slice 都是 Markdown 連結，且能到達對應的 Slice 檔案或 heading。
 - Shared Changes
-    - 只含至少兩個 Slice 共同依賴的修改，沒有符合項目時寫 `None`。
+    - 只含至少兩個 Slice 共同依賴的修改；每個項目都列出具體檔案與變更狀態，沒有符合項目時寫 `None`。
 - 檔案變更總覽
     - 列出全部變更檔案，並在每個檔案路徑前使用 `[DELETE]`、`[UPDATE]` 或 `[CREATE]`；不得使用其他狀態文字或標記。
+    - 與全部 Slice 的 Changes 及 Shared Changes 雙向核對後，檔案集合、路徑與變更狀態完全相同；同一檔案出現在多個 Slice 時，總覽只列一次。
 - Final Validation
     - 覆蓋 acceptance criteria、受影響 workspace 的既有檢查與跨 package dependency 變化。
 - 表達與可讀性

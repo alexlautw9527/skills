@@ -1,25 +1,25 @@
 ---
 name: to-frontend-implementation-plan
-description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可執行、可 review 的功能片段實作計畫。規劃前端功能或拆解跨 workspace 實作時使用。
+description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可執行、可 review 的 Slice 實作計畫。規劃前端功能或拆解跨 workspace 實作時使用。
 ---
 
 先向使用者確認實作計畫的存放位置，再讀完功能 spec 與 repository 並產生計畫。計畫依下列模板結構輸出，只保留會影響實作選擇的資訊：
 
-- Current State：Entry point、Existing flow、Existing patterns、Constraints（狀態歸屬、workspace 邊界等限制）
-- 功能片段：每個片段標明對應的 story，含 Outcome、Changes、Data flow、Validation；spec 有提供設計稿時，附上對應此片段的設計稿連結；片段排列順序即實作順序
-- Shared Changes：跨片段共用修改
+- Current State：Entry points、Existing flow、Existing patterns、Constraints（狀態歸屬、workspace 邊界等限制）。每項先說明運作方式或責任，再於下一層列出 path、route、symbol 或設定依據
+- Slice：每個 Slice 標明對應的 story，含 Outcome、Changes、Data flow、Validation。每項 Outcome 都要附上功能 spec 來源；spec 有提供設計稿時，附上對應此 Slice 的設計稿連結；Slice 排列順序即實作順序
+- Shared Changes：跨 Slice 共用修改
 - 檔案變更總覽：使用 `[DELETE]`、`[UPDATE]`、`[CREATE]` 標明本次刪除、修改與新增的全部檔案
-- Story 覆蓋對照表：PRD 全部 story 與覆蓋它的片段
+- Story 覆蓋對照表：列出 PRD 全部 story，並以 Markdown 連結指向覆蓋它的 Slice
 - Final Validation：含 PRD 所有 story（需求單元）的覆蓋檢查
 
 ## 輸入與產出
 
 - 將下列來源視為功能 spec（以使用者指定或 repository 內可確認者為準）：
-  - PRD
-  - UI spec
-  - issue
-  - 設計說明
-  - acceptance criteria
+    - PRD
+    - UI spec
+    - issue
+    - 設計說明
+    - acceptance criteria
 - 將 repository 內目前存在的程式碼、設定、測試與專案指令視為實作依據。spec 說明預期行為，repository 決定實作位置與沿用方式。
 - 開始研究前，先確認使用者要直接在回覆中接收完整 Markdown 計畫，還是要將計畫寫入指定的檔案或目錄。使用者已提供路徑時，覆述該路徑並取得確認；未提供時，詢問存放位置，不自行決定。
 - 取得確認後，依確認的形式交付計畫。寫入檔案或目錄時，只能使用使用者確認的路徑。
@@ -37,10 +37,10 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 └── 03-<observable-behavior>.md
 ```
 
-- `index.md` 是整份計畫的入口，保留 Current State、片段順序與相對連結、Shared Changes、檔案變更總覽、Story 覆蓋對照表及 Final Validation。
-- 每個功能片段各自使用一個檔案，只包含該片段的 Outcome、Changes、Data flow、Design 與 Validation。
-- 片段檔名使用 `<兩位數順序>-<observable-behavior>.md`。順序與片段編號一致；`<observable-behavior>` 取自片段標題描述的可觀察行為，轉成小寫英文 kebab-case。
-- 片段檔名不得使用 story ID 或只描述技術層的名稱。調整片段順序時，同步重新命名檔案，並更新 `index.md` 內的相對連結與片段編號。
+- `index.md` 是整份計畫的入口，保留 Current State、Slice 順序與相對連結、Shared Changes、檔案變更總覽、Story 覆蓋對照表及 Final Validation。Story 覆蓋對照表中的 Slice 使用相對連結指向對應檔案。
+- 每個 Slice 各自使用一個檔案，只包含該 Slice 的 Outcome（含來源）、Changes、Data flow、Design 與 Validation。
+- Slice 檔名使用 `<兩位數順序>-<observable-behavior>.md`。順序與 Slice 編號一致；`<observable-behavior>` 取自 Slice 標題描述的可觀察行為，轉成小寫英文 kebab-case。
+- Slice 檔名不得使用 story ID 或只描述技術層的名稱。調整 Slice 順序時，同步重新命名檔案，並更新 `index.md` 內的相對連結與 Slice 編號。
 
 如果必要的 spec 無法存取，或缺少的規則會導致不同的可觀察行為，先提出一個可解除阻礙的問題。可以從 repository 查證的事項不得詢問使用者。
 
@@ -92,17 +92,27 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 
 答案為否時，從計畫刪除。
 
+Current State 使用「概覽 → 實際位置或流程步驟 → 證據」的順序：
+
+1. Entry points 依使用者可進入的頁面、route、供其他 module 呼叫的 export，或事件處理位置分組。頂層 bullet 先說明該入口負責的行為與所屬 workspace，下一層再列 route、page、module 或 symbol。
+2. Existing flow 依一條完整資料流分組。頂層 bullet 先說明資料從哪裡進入、由誰持有，以及最後產生什麼結果；下一層依 UI 事件、state、query、轉換與 render 等實際步驟列出位置。
+3. Existing patterns 先說明要沿用的做法與適用原因，下一層再用一至三個 path 或 symbol 作為依據。只有路徑清單、沒有做法與適用原因，不算 existing pattern。
+4. Current State 只記錄目前已存在的實作。尚未實作的 route、module 或資料流，請寫在對應 Slice 的 Changes。預計新增、修改或刪除的檔案，請同時列入檔案變更總覽。實作前必須滿足的條件，以及實作時必須遵守的限制，請寫在 Constraints。
+5. 同一個 bullet 若同時混入入口、資料流、修改計畫或限制，依上述責任拆到對應小節，不用一個長段落保留全部資訊。
+
 ### 4. 切分可驗證行為
 
-1. 整理完整行為鏈時，依據 spec 的 acceptance criteria、使用流程與系統可觀察狀態。覆蓋關係由每個片段標題的 story 對應直接呈現，不在計畫重述 spec 內容。Validation 欄位只寫驗證方式，不複製 acceptance criteria 原文。spec 的 acceptance criteria 有穩定 ID（例如 AC-001）時，直接引用該 ID；沒有穩定 ID 時，把 criteria 改寫成具體可執行的驗證步驟。
-2. 依可觀察行為切成功能片段。每個片段貫穿 UI、state、資料存取與 API，包含完成該行為所需的跨 workspace 修改與測試。
-3. 讓每個片段完成時都能獨立實作、驗證與 review。若結果只能等其他片段完成後觀察，合併片段或重新選擇邊界。
-4. 依可以安全交付與驗證的順序排列片段。package boundary 不構成片段邊界；同一片段可以修改多個 workspace。
-5. 優先沿用既有模式。只有多個片段確實共同依賴，且無法合理歸入最早使用它的片段時，才規劃 shared abstraction 或共用 contract。
-6. 片段切分完成後，逐項核對 PRD 的 story 清單。每個片段都要標明對應的 story，同一片段對應多個 story 時全部列出；缺少對應片段的 story 要補片段，或說明排除理由。PRD 的全部 story 都必須有落點。
-7. 依實作順序將片段編為「片段 1」、「片段 2」等連續編號。調整片段順序時，同步更新片段標題與 Story 覆蓋對照表中的編號。
+1. 整理完整行為鏈時，依據 spec 的 acceptance criteria、使用流程與系統可觀察狀態。覆蓋關係由每個 Slice 標題的 story 對應直接呈現，不在計畫重述 spec 內容。Validation 欄位只寫驗證方式，不複製 acceptance criteria 原文。spec 的 acceptance criteria 有穩定 ID（例如 AC-001）時，直接引用該 ID；沒有穩定 ID 時，把 criteria 改寫成具體可執行的驗證步驟。
+2. 每項 Outcome 都要附上支持該結果的功能 spec 來源。優先引用穩定的 story ID、acceptance criteria ID 或 UI spec ID；沒有穩定 ID 時，連結到使用者提供或 repository 內的 spec 小節。來源只建立可追查關係，不在 Outcome 重抄需求內容。
+3. 依可觀察行為切成 Slice。每個 Slice 貫穿 UI、state、資料存取與 API，包含完成該行為所需的跨 workspace 修改與測試。
+4. 讓每個 Slice 完成時都能獨立實作、驗證與 review。若結果只能等其他 Slice 完成後觀察，合併 Slice 或重新選擇邊界。
+5. 依可以安全交付與驗證的順序排列 Slice。package boundary 不構成 Slice 邊界；同一 Slice 可以修改多個 workspace。
+6. 優先沿用既有模式。只有多個 Slice 確實共同依賴，且無法合理歸入最早使用它的 Slice 時，才規劃 shared abstraction 或共用 contract。
+7. Slice 切分完成後，逐項核對 PRD 的 story 清單。每個 Slice 都要標明對應的 story，同一 Slice 對應多個 story 時全部列出；缺少對應 Slice 的 story 要補 Slice，或說明排除理由。PRD 的全部 story 都必須有落點。
+8. 依實作順序將 Slice 編為「Slice 1」、「Slice 2」等連續編號。調整 Slice 順序時，同步更新 Slice 標題與 Story 覆蓋對照表中的編號。
+9. Story 覆蓋對照表中的 Slice 一律使用 Markdown 連結。拆檔計畫連到對應的 Slice 檔案；單檔計畫連到同一份文件內的 Slice heading anchor。同一個 story 由多個 Slice 覆蓋時，每個 Slice 各自提供連結。
 
-不得建立只以技術層命名的片段，例如 `Add types`、`Update API`、`Update hooks`、`Update components` 或 `Add tests`。這些修改必須歸入會產生可觀察結果的片段。
+不得建立只以技術層命名的 Slice，例如 `Add types`、`Update API`、`Update hooks`、`Update components` 或 `Add tests`。這些修改必須歸入會產生可觀察結果的 Slice。
 
 ### 5. 寫出計畫
 
@@ -114,7 +124,7 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 - 元件以檔案層級記錄：新增或擴充哪個元件、它與誰互動。不寫 props 設計與元件內部拆分。
 - 不寫逐行程式碼、行號、完整函式內容或未經查證的介面。
 - 不使用 `Update state` 這類無法判斷修改位置與結果的描述。
-- 同一項修改同時支援多個片段時，放入 Shared Changes；只服務單一片段時，留在該片段。
+- 同一項修改同時支援多個 Slice 時，放入 Shared Changes；只服務單一 Slice 時，留在該 Slice。
 
 依下列模板輸出。檔案路徑、module、symbol、workspace、package、指令、設定值，以及穩定的 story 或 acceptance criteria ID 使用 inline backtick；自然語言敘述不使用 inline backtick：
 
@@ -123,10 +133,23 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 ## Current State
 
-- Entry point: `<app / route / page>`
-- Existing flow: `<UI> → <state/query> → <API> → <render>`
-- Existing patterns:
-  - `<path>`：<要沿用的做法，以及它為何適用>
+### Entry points
+
+- <入口負責的使用者行為>（`<workspace>`）
+  - Route、export 或事件：`<route-export-or-event>`
+  - 實作位置：`<path-or-symbol>`
+
+### Existing flow
+
+- <這條流程如何接收輸入、持有資料並產生結果>
+  - 輸入或事件：`<path-or-symbol>`
+  - 狀態或資料存取：`<path-or-symbol>`
+  - 輸出或 render：`<path-or-symbol>`
+
+### Existing patterns
+
+- <要沿用的做法，以及它為何適用>
+  - 依據：`<path-or-symbol>`
 
 ### Constraints & Invariants
 
@@ -144,15 +167,16 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
   - `驗證：` <如何判斷結果符合這項規則；test、assertion、symbol 或指令使用 inline backtick>
   - <其他會影響實作判斷的補充說明；沒有則省略>
 
-## 功能片段
+## Slice
 
-片段依實作順序從 1 開始編號。調整片段順序時，重新編號並同步更新所有引用。
+Slice 依實作順序從 1 開始編號。調整 Slice 順序時，重新編號並同步更新所有引用。
 
-### 片段 1：<可觀察行為>（對應 <story>）
+### Slice 1：<可觀察行為>（對應 <story>）
 
 **Outcome**
 
 - <完成後可以觀察到什麼>
+  - 來源：`<story-or-acceptance-criteria-ID>`、[<UI spec 或其他功能 spec 小節>](<spec-url-or-relative-path>)
 
 **Changes**
 
@@ -165,7 +189,7 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 **Design**
 
-- [<對應此片段的畫面或互動>](design-url)
+- [<對應此 Slice 的畫面或互動>](design-url)
 
 **Validation**
 
@@ -175,7 +199,7 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 ## Shared Changes
 
-只放多個片段都依賴、無法合理歸屬單一片段的共用修改。
+只放多個 Slice 都依賴、無法合理歸屬單一 Slice 的共用修改。
 
 - `<shared package / contract / primitive>`
   - <修改內容與原因>
@@ -184,7 +208,7 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 ## 檔案變更總覽
 
-將全部片段與 Shared Changes 的檔案彙整成 tree，依 workspace 與目錄排列。每個檔案路徑前使用下列固定標記：
+將全部 Slice 與 Shared Changes 的檔案彙整成 tree，依 workspace 與目錄排列。每個檔案路徑前使用下列固定標記：
 
 - `[DELETE]`：刪除既有檔案。
 - `[UPDATE]`：修改既有檔案。
@@ -198,17 +222,17 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 ## Story 覆蓋對照表
 
-列出 PRD 的全部 story 與覆蓋它的片段；沒有片段覆蓋的 story 標明排除理由：
+列出 PRD 的全部 story 與覆蓋它的 Slice；沒有 Slice 覆蓋的 story 標明排除理由。`<slice-target>` 在拆檔計畫使用相對檔案路徑，在單檔計畫使用 Slice heading anchor：
 
-| story             | 覆蓋的片段       |
-| ----------------- | ---------------- |
-| <story ID 或名稱> | <片段 1、片段 2> |
-| <story ID 或名稱> | 無，<排除理由>   |
+| story             | 覆蓋的 Slice                                                        |
+| ----------------- | ------------------------------------------------------------------- |
+| <story ID 或名稱> | [Slice 1](<slice-1-target>)、[Slice 2](<slice-2-target>)             |
+| <story ID 或名稱> | 無，<排除理由>                                                      |
 
 ## Final Validation
 
 - [ ] Spec acceptance criteria 全部有對應驗證。
-- [ ] PRD 的所有 story 都有對應的片段與驗證。
+- [ ] PRD 的所有 story 都有對應的 Slice 與驗證。
 - [ ] Affected regression tests pass.
 - [ ] Affected workspaces typecheck / lint pass.
 - [ ] 必要的 integration / E2E flow pass.
@@ -217,31 +241,35 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 ### 6. 修訂與交付
 
-1. 初稿完成且技術內容與覆蓋關係都已檢查後，交付前必須調用 make-ai-readable-zh skill 修訂所有輸出檔案。
-2. 修訂時改善段落結構與句子完整性，使用台灣慣用的正體中文，並在上下文中說清楚技術名詞的作用。不得改變 spec 或 repository 支持的事實、檔案路徑、symbol、指令、資料流、片段順序與 Story 覆蓋關係。
+1. 初稿完成且技術內容與覆蓋關係都已檢查後，交付前必須調用 `make-ai-readable-zh` skill 修訂所有輸出檔案。
+2. 修訂時改善段落結構與句子完整性，使用台灣慣用的正體中文，並在上下文中說清楚技術名詞的作用。不得改變 spec 或 repository 支持的事實、檔案路徑、symbol、指令、資料流、Slice 順序與 Story 覆蓋關係。
 3. 修訂後重新執行完成檢查，確認文字調整沒有造成技術內容遺漏或語意改變。
 
 ## 完成檢查
 
 - 存放位置
-  - 已在讀取 spec、探索 repository 或建立文件前取得使用者確認，且交付形式與路徑符合確認內容。
+    - 已在讀取 spec、探索 repository 或建立文件前取得使用者確認，且交付形式與路徑符合確認內容。
 - Current State
-  - 每一項（含 Constraints & Invariants）都影響實作選擇，並附有可追查的 path、module 或設定依據。
-- 功能片段
-  - 每個片段有單一可觀察 outcome、完整 data flow、可立即執行的 validation。
-  - 每個片段標明對應 story，並依實作順序連續編號；片段標題與 Story 覆蓋對照表使用相同編號。
-  - 每個片段在 spec 提供對應設計稿時附上連結；spec 未提供時整個 Design 小節省略，不自行猜測或編造 URL。
+    - Entry points、Existing flow 與 Existing patterns 的頂層 bullet 先說明運作方式、責任或沿用原因，下一層才列 path、route、symbol 或設定依據。
+    - 每一項（含 Constraints & Invariants）都影響實作選擇，並附有可追查的 path、module 或設定依據。
+    - Current State 不含尚未存在的 route、module 或預計修改內容。
+- Slice
+    - 每個 Slice 有單一可觀察 Outcome、完整 Data flow、可立即執行的 Validation。
+    - 每項 Outcome 都附上可追查的功能 spec 來源；來源使用穩定 ID 或連結，不以 repository 實作位置代替需求來源。
+    - 每個 Slice 標明對應 story，並依實作順序連續編號；Slice 標題與 Story 覆蓋對照表使用相同編號。
+    - 每個 Slice 在 spec 提供對應設計稿時附上連結；spec 未提供時整個 Design 小節省略，不自行猜測或編造 URL。
 - Story 覆蓋
-  - 每個 story 都有對應的片段（無對應者標明排除理由），與 Story 覆蓋對照表一致。
+    - 每個 story 都有對應的 Slice（無對應者標明排除理由），與 Story 覆蓋對照表一致。
+    - Story 覆蓋對照表中的每個 Slice 都是 Markdown 連結，且能到達對應的 Slice 檔案或 heading。
 - Shared Changes
-  - 只含至少兩個片段共同依賴的修改，沒有符合項目時寫 `None`。
+    - 只含至少兩個 Slice 共同依賴的修改，沒有符合項目時寫 `None`。
 - 檔案變更總覽
-  - 列出全部變更檔案，並在每個檔案路徑前使用 `[DELETE]`、`[UPDATE]` 或 `[CREATE]`；不得使用其他狀態文字或標記。
+    - 列出全部變更檔案，並在每個檔案路徑前使用 `[DELETE]`、`[UPDATE]` 或 `[CREATE]`；不得使用其他狀態文字或標記。
 - Final Validation
-  - 覆蓋 acceptance criteria、受影響 workspace 的既有檢查與跨 package dependency 變化。
+    - 覆蓋 acceptance criteria、受影響 workspace 的既有檢查與跨 package dependency 變化。
 - 表達與可讀性
-  - 交付前已調用 make-ai-readable-zh skill 修訂所有輸出檔案，且修訂沒有改變技術事實、實作順序或 Story 覆蓋關係。
+    - 交付前已調用 make-ai-readable-zh skill 修訂所有輸出檔案，且修訂沒有改變技術事實、實作順序或 Story 覆蓋關係。
 - 拆檔產出
-  - 使用者要求拆檔時，`index.md` 包含所有跨片段內容與片段連結；每個片段檔名及內容都符合拆檔規則，且所有相對連結都能到達對應檔案。
+    - 使用者要求拆檔時，`index.md` 包含所有跨 Slice 內容與 Slice 連結；每個 Slice 檔名及內容都符合拆檔規則，且功能清單與 Story 覆蓋對照表的所有相對連結都能到達對應檔案。
 - 計畫不重述需求或 acceptance criteria，不把 UI、state、API、package、tests 拆成獨立工作階段。
 - 全文不含無法由 spec 或 repository 支持的專案假設。

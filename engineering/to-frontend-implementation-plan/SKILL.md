@@ -24,6 +24,23 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 - 使用者指定輸出路徑時，將計畫寫入該路徑。未指定時，在回覆中輸出完整 Markdown 計畫，不自行建立文件。
 - 不修改產品程式碼。除非使用者另外要求，這個 skill 只負責研究與規劃。
 
+### 拆檔產出
+
+使用者要求將計畫拆成多個檔案時，將所有檔案放在同一個目錄。使用者未指定目錄名稱時，使用 `<feature>-implementation-plan/`；`<feature>` 取自 spec 或 repository 可確認的功能名稱，並轉成小寫英文 kebab-case。
+
+```text
+<feature>-implementation-plan/
+├── index.md
+├── 01-<observable-behavior>.md
+├── 02-<observable-behavior>.md
+└── 03-<observable-behavior>.md
+```
+
+- `index.md` 是整份計畫的入口，保留 Current State、片段順序與相對連結、Cross-Cutting Changes、檔案變更總覽、Story 覆蓋對照表及 Final Validation。
+- 每個功能片段各自使用一個檔案，只包含該片段的 Outcome、Changes、Data flow、Design 與 Validation。
+- 片段檔名使用 `<兩位數順序>-<observable-behavior>.md`。順序與片段編號一致；`<observable-behavior>` 取自片段標題描述的可觀察行為，轉成小寫英文 kebab-case。
+- 片段檔名不得使用 story ID 或只描述技術層的名稱。調整片段順序時，同步重新命名檔案，並更新 `index.md` 內的相對連結與片段編號。
+
 如果必要的 spec 無法存取，或缺少的規則會導致不同的可觀察行為，先提出一個可解除阻礙的問題。可以從 repository 查證的事項不得詢問使用者。
 
 ## 工作流程
@@ -62,7 +79,7 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 4. 依可以安全交付與驗證的順序排列片段。package boundary 不構成片段邊界；同一片段可以修改多個 workspace。
 5. 優先沿用既有模式。只有多個片段確實共同依賴，且無法合理歸入最早使用它的片段時，才規劃 shared abstraction 或共用 contract。
 6. 片段切分完成後，逐項核對 PRD 的 story 清單。每個片段都要標明對應的 story，同一片段對應多個 story 時全部列出；缺少對應片段的 story 要補片段，或說明排除理由。PRD 的全部 story 都必須有落點。
-7. 指派片段 ID 時調用 make-id-stable skill，依其規則產生格式並檢查 ID 不表示排序、不得重新編號。
+7. 依實作順序將片段編為「片段 1」、「片段 2」等連續編號。調整片段順序時，同步更新片段標題與 Story 覆蓋對照表中的編號。
 
 不得建立只以技術層命名的片段，例如 `Add types`、`Update API`、`Update hooks`、`Update components` 或 `Add tests`。這些修改必須歸入會產生可觀察結果的片段。
 
@@ -99,9 +116,9 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 ## 功能片段
 
-每個片段以穩定 ID 命名，例如 `<SLICE-XXXXXXXX>`；ID 一經指派即固定，不因片段排序調整而變。
+片段依實作順序從 1 開始編號。調整片段順序時，重新編號並同步更新所有引用。
 
-### <SLICE-XXXXXXXX>：<可觀察行為>（對應 <story>）
+### 片段 1：<可觀察行為>（對應 <story>）
 
 **Outcome**
 
@@ -149,10 +166,10 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 列出 PRD 的全部 story 與覆蓋它的片段；沒有片段覆蓋的 story 標明排除理由：
 
-| story             | 覆蓋的片段                       |
-| ----------------- | -------------------------------- |
-| <story ID 或名稱> | <SLICE-XXXXXXXX、SLICE-YYYYYYYY> |
-| <story ID 或名稱> | 無，<排除理由>                   |
+| story             | 覆蓋的片段       |
+| ----------------- | ---------------- |
+| <story ID 或名稱> | <片段 1、片段 2> |
+| <story ID 或名稱> | 無，<排除理由>   |
 
 ## Final Validation
 
@@ -164,13 +181,19 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 - [ ] 沒有新增未規劃的 cross-package dependency。
 ```
 
+### 5. 修訂與交付
+
+1. 初稿完成且技術內容與覆蓋關係都已檢查後，交付前必須調用 make-ai-readable-zh skill 修訂所有輸出檔案。
+2. 修訂時改善段落結構與句子完整性，使用台灣慣用的正體中文，並在上下文中說清楚技術名詞的作用。不得改變 spec 或 repository 支持的事實、檔案路徑、symbol、指令、資料流、片段順序與 Story 覆蓋關係。
+3. 修訂後重新執行完成檢查，確認文字調整沒有造成技術內容遺漏或語意改變。
+
 ## 完成檢查
 
 - Current State
   - 每一項（含 Constraints & Invariants）都影響實作選擇，並附有可追查的 path、module 或設定依據。
 - 功能片段
   - 每個片段有單一可觀察 outcome、完整 data flow、可立即執行的 validation。
-  - 每個片段標明對應 story，ID 依 make-id-stable skill 產生並檢查（不表示排序、不重新編號）。
+  - 每個片段標明對應 story，並依實作順序連續編號；片段標題與 Story 覆蓋對照表使用相同編號。
   - 每個片段在 spec 提供對應設計稿時附上連結；spec 未提供時整個 Design 小節省略，不自行猜測或編造 URL。
 - Story 覆蓋
   - 每個 story 都有對應的片段（無對應者標明排除理由），與 Story 覆蓋對照表一致。
@@ -180,5 +203,9 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
   - 列出全部變更檔案，每項標明新增、修改或刪除。
 - Final Validation
   - 覆蓋 acceptance criteria、受影響 workspace 的既有檢查與跨 package dependency 變化。
+- 表達與可讀性
+  - 交付前已調用 make-ai-readable-zh skill 修訂所有輸出檔案，且修訂沒有改變技術事實、實作順序或 Story 覆蓋關係。
+- 拆檔產出
+  - 使用者要求拆檔時，`index.md` 包含所有跨片段內容與片段連結；每個片段檔名及內容都符合拆檔規則，且所有相對連結都能到達對應檔案。
 - 計畫不重述需求或 acceptance criteria，不把 UI、state、API、package、tests 拆成獨立工作階段。
 - 全文不含無法由 spec 或 repository 支持的專案假設。

@@ -7,7 +7,7 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 
 - Current State：Entry point、Existing flow、Existing patterns、Constraints（狀態歸屬、workspace 邊界等限制）
 - 功能片段：每個片段標明對應的 story，含 Outcome、Changes、Data flow、Validation；spec 有提供設計稿時，附上對應此片段的設計稿連結；片段排列順序即實作順序
-- Cross-Cutting Changes：跨片段共用修改
+- Shared Changes：跨片段共用修改
 - 檔案變更總覽：本次新增、修改、刪除的全部檔案一覽
 - Story 覆蓋對照表：PRD 全部 story 與覆蓋它的片段
 - Final Validation：含 PRD 所有 story（需求單元）的覆蓋檢查
@@ -36,7 +36,7 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 └── 03-<observable-behavior>.md
 ```
 
-- `index.md` 是整份計畫的入口，保留 Current State、片段順序與相對連結、Cross-Cutting Changes、檔案變更總覽、Story 覆蓋對照表及 Final Validation。
+- `index.md` 是整份計畫的入口，保留 Current State、片段順序與相對連結、Shared Changes、檔案變更總覽、Story 覆蓋對照表及 Final Validation。
 - 每個功能片段各自使用一個檔案，只包含該片段的 Outcome、Changes、Data flow、Design 與 Validation。
 - 片段檔名使用 `<兩位數順序>-<observable-behavior>.md`。順序與片段編號一致；`<observable-behavior>` 取自片段標題描述的可觀察行為，轉成小寫英文 kebab-case。
 - 片段檔名不得使用 story ID 或只描述技術層的名稱。調整片段順序時，同步重新命名檔案，並更新 `index.md` 內的相對連結與片段編號。
@@ -93,9 +93,9 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 - 元件以檔案層級記錄：新增或擴充哪個元件、它與誰互動。不寫 props 設計與元件內部拆分。
 - 不寫逐行程式碼、行號、完整函式內容或未經查證的介面。
 - 不使用 `Update state` 這類無法判斷修改位置與結果的描述。
-- 同一項修改同時支援多個片段時，放入 Cross-Cutting Changes；只服務單一片段時，留在該片段。
+- 同一項修改同時支援多個片段時，放入 Shared Changes；只服務單一片段時，留在該片段。
 
-依下列模板輸出：
+依下列模板輸出。檔案路徑、module、symbol、workspace、package、指令、設定值，以及穩定的 story 或 acceptance criteria ID 使用 inline backtick；自然語言敘述不使用 inline backtick：
 
 ```md
 # <Feature> Implementation Plan
@@ -105,14 +105,23 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 - Entry point: `<app / route / page>`
 - Existing flow: `<UI> → <state/query> → <API> → <render>`
 - Existing patterns:
-  - `<path>`: `<要沿用的做法，以及它為何適用>`
+  - `<path>`：<要沿用的做法，以及它為何適用>
 
 ### Constraints & Invariants
 
-| 類型        | 項目                                                                                            | 說明                 |
-| ----------- | ----------------------------------------------------------------------------------------------- | -------------------- |
-| Constraints | `<限制修改選擇的條件，例如 workspace boundary、generated code、state ownership>`                | `<影響哪些修改選擇>` |
-| Invariants  | `<操作完成後資料必須符合的規則，寫成「只要 X 完成就一定要 Y」或「任何完成的結果都不能出現 Z」>` | `<如何判斷結果正確>` |
+每項 constraint 或 invariant 先用一個頂層 bullet 說明規則，再於下一層列出一個 `影響：` 或 `驗證：`。需要補充其他會影響實作判斷的敘述時，繼續新增下一層 bullet；沒有則省略。
+
+#### Constraints
+
+- `<workspace / module / config>`：<限制修改選擇的條件，例如 workspace boundary、generated code、state ownership>
+  - `影響：` <這項限制會排除哪些修改位置或實作方式>
+  - <其他會影響實作判斷的補充說明；沒有則省略>
+
+#### Invariants
+
+- <操作完成後資料必須符合的規則，寫成「只要 X 完成就一定要 Y」或「任何完成的結果都不能出現 Z」>
+  - `驗證：` <如何判斷結果符合這項規則；test、assertion、symbol 或指令使用 inline backtick>
+  - <其他會影響實作判斷的補充說明；沒有則省略>
 
 ## 功能片段
 
@@ -122,12 +131,12 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 **Outcome**
 
-- `<完成後可以觀察到什麼>`
+- <完成後可以觀察到什麼>
 
 **Changes**
 
 - `<path or module>`
-  - `<修改什麼，以及必要時說明為什麼在這裡改>`
+  - <修改什麼，以及必要時說明為什麼在這裡改>
 
 **Data flow**
 
@@ -135,26 +144,26 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 **Design**
 
-- `<spec 提供的設計稿連結，對應此片段涵蓋的畫面或互動；spec 未提供時整個小節省略>`
+- [<對應此片段的畫面或互動>](<design-url>)
 
 **Validation**
 
-- `<test 或明確驗證方式>`
+- <test 或明確驗證方式；test、symbol 或指令使用 inline backtick>
 
 ...
 
-## Cross-Cutting Changes
+## Shared Changes
 
 只放多個片段都依賴、無法合理歸屬單一片段的共用修改。
 
 - `<shared package / contract / primitive>`
-  - `<change and reason>`
+  - <修改內容與原因>
 
 沒有則寫 `None`。
 
 ## 檔案變更總覽
 
-將全部片段與 Cross-Cutting Changes 的檔案彙整成 tree，依 workspace 與目錄排列，每個檔案標明新增、修改或刪除：
+將全部片段與 Shared Changes 的檔案彙整成 tree，依 workspace 與目錄排列，每個檔案標明新增、修改或刪除：
 
 <workspace>/
 └── <dir>/
@@ -197,7 +206,7 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
   - 每個片段在 spec 提供對應設計稿時附上連結；spec 未提供時整個 Design 小節省略，不自行猜測或編造 URL。
 - Story 覆蓋
   - 每個 story 都有對應的片段（無對應者標明排除理由），與 Story 覆蓋對照表一致。
-- Cross-Cutting Changes
+- Shared Changes
   - 只含至少兩個片段共同依賴的修改，沒有符合項目時寫 `None`。
 - 檔案變更總覽
   - 列出全部變更檔案，每項標明新增、修改或刪除。

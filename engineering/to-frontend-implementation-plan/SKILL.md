@@ -6,7 +6,7 @@ description: 依功能 spec 與既有前端 monorepo 的實際架構，產出可
 先讀完功能 spec 與 repository，再產生實作計畫。計畫依下列模板結構輸出，只保留會影響實作選擇的資訊：
 
 - Current State：Entry point、Existing flow、Existing patterns、Constraints（狀態歸屬、workspace 邊界等限制）
-- 功能片段：每個片段標明對應的 story，含 Outcome、Changes、Data flow、Validation；片段排列順序即實作順序
+- 功能片段：每個片段標明對應的 story，含 Outcome、Changes、Data flow、Validation；spec 有提供設計稿時，附上對應此片段的設計稿連結；片段排列順序即實作順序
 - Cross-Cutting Changes：跨片段共用修改
 - 檔案變更總覽：本次新增、修改、刪除的全部檔案一覽
 - Story 覆蓋對照表：PRD 全部 story 與覆蓋它的片段
@@ -116,6 +116,10 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 
 `<action> → <state/data> → <result>`
 
+**Design**
+
+- `<spec 提供的設計稿連結，對應此片段涵蓋的畫面或互動；spec 未提供時整個小節省略>`
+
 **Validation**
 
 - `<test 或明確驗證方式>`
@@ -167,6 +171,7 @@ Changes 寫到 file 或 module 層級，並說明每個變更承擔的責任：
 - 功能片段
   - 每個片段有單一可觀察 outcome、完整 data flow、可立即執行的 validation。
   - 每個片段標明對應 story，ID 依 make-id-stable skill 產生並檢查（不表示排序、不重新編號）。
+  - 每個片段在 spec 提供對應設計稿時附上連結；spec 未提供時整個 Design 小節省略，不自行猜測或編造 URL。
 - Story 覆蓋
   - 每個 story 都有對應的片段（無對應者標明排除理由），與 Story 覆蓋對照表一致。
 - Cross-Cutting Changes

@@ -3,8 +3,6 @@ name: distill
 description: 從已完成的實作、除錯、程式碼審查或驗證工作中，萃取少量可跨工作項目重用的工程知識。適用於降低既有程式碼庫的重複理解成本，並避免重複做出已被證據否定的判斷。
 ---
 
-# 萃取可重用的實作知識
-
 從完成的工程工作中，只保留足以改變後續判斷或縮短驗證時間的知識。每次保留 0 至 3 條。
 
 不要輸出工作項目摘要、變更紀錄、完整除錯過程、架構文件、工作日誌或脫離具體證據的通用建議。
@@ -47,13 +45,23 @@ description: 從已完成的實作、除錯、程式碼審查或驗證工作中�
 
 ## 分類
 
-使用下列最貼近結論的類型：
+每條知識只回答一個問題，使用下列最貼近主要結論的 type：
 
-- `mental-model`：常見理解與實際系統行為不同。
-- `invariant`：不可任意改變的可觀察行為或介面要求。
-- `failure-pattern`：特定條件下可重現的失敗模式。
-- `decision-rule`：出現特定訊號時應採取的判斷或調查順序。
-- `verification-path`：可重複使用、能取得可信證據的驗證入口。
+- `system-model`：說明資料、控制流程或元件之間如何運作，回答「系統為什麼會這樣運作」。
+- `constraint`：描述必須維持的可觀察行為、相容性要求或限制，回答「哪些條件不能被破壞」。
+- `failure-signature`：連結特定前提、可觀察症狀與已確認原因，回答「這個現象通常表示什麼」。
+- `decision-rule`：指定特定訊號出現時應選擇的處理或調查方向，回答「接下來先做哪一種判斷」。
+- `verification-procedure`：指定可重複執行、能取得或排除證據的操作，回答「如何確認」。
+
+依下列順序選擇 type：
+
+1. 條目主要描述必須維持的要求時，使用 `constraint`。
+2. 條目主要辨識故障的前提、症狀與原因時，使用 `failure-signature`。
+3. 條目主要解釋系統機制時，使用 `system-model`。
+4. 條目主要選擇處理或調查方向時，使用 `decision-rule`。
+5. 條目主要說明如何取得證據時，使用 `verification-procedure`。
+
+同一項發現同時包含系統結論與操作規則時，拆成兩條知識。將系統機制、限制或失敗辨識寫成對應的事實類型；將處理選擇或查證操作另寫為 `decision-rule` 或 `verification-procedure`。不要讓單一條目同時承載系統結論與操作規則。
 
 候選超過 3 條時，依下列順序保留：
 
@@ -67,7 +75,7 @@ description: 從已完成的實作、除錯、程式碼審查或驗證工作中�
 只輸出保留的知識，不加入前言、心得或工作摘要。
 
 ```yaml
-- type: mental-model | invariant | failure-pattern | decision-rule | verification-path
+- type: system-model | constraint | failure-signature | decision-rule | verification-procedure
   domain: <相關領域>
   scope: <適用條件與範圍>
   knowledge: <可直接改變後續行動的結論>

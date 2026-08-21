@@ -16,7 +16,7 @@
 - SSOT（蒸餾後的模組層級 AGENTS.md）：需要持久化，隨 feature 合進主分支。
 
 1. UI 規格：Figma → `to-ui-spec` → .ux.md
-2. 實作計畫：PRD + UI 規格 → `to-frontend-implementation-plan` → 實作計畫（含檔案變更總覽與 Story 覆蓋對照表）
+2. 實作計畫：PRD + UI 規格 → `to-frontend-implementation-plan` → 實作計畫
 3. 實作：依計畫執行，Final Validation 全過、變更與計畫一致為完成
 4. 蒸餾：實作完成、merge 前，以 `to-local-agents-md` 更新 branch 觸及的模組層級 `AGENTS.md`
 5. 合併：蒸餾過的 `AGENTS.md` 隨 feature 合進主分支（main/master）

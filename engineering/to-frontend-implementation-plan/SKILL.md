@@ -196,17 +196,15 @@ Rules 與 Shared Concerns 的分工：
 
 各 Slice 若適用 Shared Concerns，在 **Rules** 末尾加一行 `Shared Concerns：<標題>`，只列 heading 文字，不重述五個欄位。
 
-### 6. 依可觀察行為切分 Slice
+### 6. 依 `to-slices` 切分 Slice
 
-1. 依 acceptance criteria、使用流程與系統可觀察狀態整理完整行為鏈。
-2. 每個 Slice 描述一個可觀察畫面、互動結果或系統狀態。UI、state、資料存取與跨 workspace 配合都歸入同一個可觀察行為，不按技術層切開。
-3. 每個 Slice 完成後都應能獨立實作與 review。若某個結果必須等待另一個 Slice 才能觀察，合併兩者或重新選擇邊界。
-4. 依安全的實作順序排列 Slice。package、workspace 或 repository 邊界不構成 Slice 邊界。
-5. 同一可觀察行為若有兩套仍在使用的實作，放進同一個 Slice。Map 兩邊都要標。
-6. 同一 Story 若含兩個可獨立交付、可獨立觀察的狀態，拆成兩個 Slice。Coverage 要把該 Story 連到所有相關 Slice。
-7. 外部介面尚未定案或由其他文件維護時，仍以可觀察行為切分，不建立只處理 API、schema、types、hooks、元件或測試的技術 Slice。
-8. 逐項核對 story 清單。每個 story 都要指向至少一個 Slice；明確排除的項目則在 Coverage 中標出 Non-Goals 或排除理由。
-9. Slice 從 1 開始連續編號。調整順序時，同步更新標題與所有連結。
+先使用 `to-slices` 判斷 Slice 的行為邊界、是否能獨立驗證與實作順序。本 skill 不重複定義這些切分規則；其結果只用來決定前端計畫的 Slice，最後仍依本 skill 的欄位填寫 Story、Scope、Rules、UI Source、UI Spec 與 Map。
+
+1. 同一可觀察行為若有兩套仍在使用的實作，放進同一個 Slice。Map 兩邊都要標。
+2. 同一 Story 若含兩個可獨立交付、可獨立觀察的狀態，拆成兩個 Slice。Coverage 要把該 Story 連到所有相關 Slice。
+3. 外部介面尚未定案或由其他文件維護時，仍以可觀察行為切分，不建立只處理 API、schema、types、hooks、元件或測試的技術 Slice。
+4. 逐項核對 story 清單。每個 story 都要指向至少一個 Slice；明確排除的項目則在 Coverage 中標出 Non-Goals 或排除理由。
+5. Slice 從 1 開始連續編號。調整順序時，同步更新標題與所有連結。
 
 ### 7. 填寫 Slice 欄位
 
@@ -432,7 +430,7 @@ Map 告訴實作者應先閱讀哪些現有程式碼，以及這些位置在目�
 
 ### Slices
 
-- Slice 依可觀察行為切分，沒有按 UI、state、API、package、types、hooks、元件或測試分成技術階段。
+- Slice 的行為邊界、獨立驗證條件與實作順序依 `to-slices` 判斷，沒有自行建立相衝突的切分規則。
 - 同一 Story 若含兩個可獨立交付的可觀察狀態，已拆成不同 Slice，並在 Coverage 列出全部連結。
 - 兩套仍在使用的實作已放進同一個 Slice，Map 兩邊都有標。
 - Slice 依實作順序連續編號，標題、檔名與連結中的編號一致。

@@ -64,23 +64,21 @@ description: 從已完成的實作、除錯、程式碼審查、驗證工作或�
 
 ## 分類
 
-每條知識只回答一個問題，使用下列最貼近主要結論的 type：
+每條知識只回答一個問題。`type` 沿用詞彙表已定義的 `Model`、`Rules`、`Risks` 與 `Validation` 概念，使用下列最貼近主要結論的值：
 
-- `system-model`：說明資料、控制流程或元件之間如何運作，回答「系統為什麼會這樣運作」。
-- `constraint`：描述必須維持的可觀察行為、相容性要求或限制，回答「哪些條件不能被破壞」。
-- `failure-signature`：連結特定前提、可觀察症狀與已確認原因，回答「這個現象通常表示什麼」。
-- `decision-rule`：指定特定訊號出現時應選擇的處理或調查方向，回答「接下來先做哪一種判斷」。
-- `verification-procedure`：指定可重複執行、能取得或排除證據的操作，回答「如何確認」。
+- `model`：說明資料、控制流程或元件之間如何運作，回答「系統為什麼會這樣運作」。
+- `rule`：描述必須維持的可觀察行為、相容性要求或限制，或指定特定訊號出現時必須採取的處理或調查方向。
+- `risk`：連結特定前提、可觀察症狀與已確認原因，說明已知失敗模式或例外情境。
+- `validation`：指定可重複執行、能取得或排除證據的操作，回答「如何確認」。
 
 依下列順序選擇 type：
 
-1. 條目主要描述必須維持的要求時，使用 `constraint`。
-2. 條目主要辨識故障的前提、症狀與原因時，使用 `failure-signature`。
-3. 條目主要解釋系統機制時，使用 `system-model`。
-4. 條目主要選擇處理或調查方向時，使用 `decision-rule`。
-5. 條目主要說明如何取得證據時，使用 `verification-procedure`。
+1. 條目主要描述必須維持的要求，或指定出現訊號後必須採取的處理時，使用 `rule`。
+2. 條目主要辨識故障的前提、症狀與原因時，使用 `risk`。
+3. 條目主要解釋系統機制時，使用 `model`。
+4. 條目主要說明如何取得證據時，使用 `validation`。
 
-同一項發現同時包含系統結論與操作規則時，拆成兩條知識。將系統機制、限制或失敗辨識寫成對應的事實類型；將處理選擇或查證操作另寫為 `decision-rule` 或 `verification-procedure`。不要讓單一條目同時承載系統結論與操作規則。
+同一項發現同時包含系統結論與規則或驗證操作時，拆成兩條知識。將系統機制、限制或失敗辨識寫成對應的 `model`、`rule` 或 `risk`；將取得證據的操作另寫為 `validation`。不要讓單一條目同時承載系統結論與規則或驗證操作。
 
 候選超過 3 條時，依下列順序保留：
 
@@ -91,7 +89,7 @@ description: 從已完成的實作、除錯、程式碼審查、驗證工作或�
 
 ## Skill 升格
 
-知識已描述可重複執行的任務流程時，才考慮建立或修改 skill。一條獨立的 `constraint`、`decision-rule` 或 `verification-procedure` 通常保留為知識即可。
+知識已描述可重複執行的任務流程時，才考慮建立或修改 skill。一條獨立的 `rule` 或 `validation` 通常保留為知識即可。
 
 候選要升格為 skill，需同時符合下列條件：
 
@@ -129,7 +127,7 @@ description: 從已完成的實作、除錯、程式碼審查、驗證工作或�
 只輸出保留的知識，不加入前言、心得或工作摘要。
 
 ```yaml
-- type: system-model | constraint | failure-signature | decision-rule | verification-procedure
+- type: model | rule | risk | validation
   domain: <相關領域>
   scope: <適用條件與範圍>
   knowledge: <可直接改變後續行動的結論>

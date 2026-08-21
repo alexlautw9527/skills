@@ -15,7 +15,7 @@ description: 從既有程式碼建立或更新模組層級 AGENTS.md 時使用�
 
 省略完整功能規格、目錄與 exported API 已直接呈現的內容、逐步實作說明，以及型別、lint、compiler 或上層指令已保證的規則。
 
-## 執行流程
+## Workflow
 
 1. 先讀取本目錄及上層目錄的 `AGENTS.md`、`CLAUDE.md` 與其他適用指令，確認以下事項：
    - 這份 `AGENTS.md` 會約束哪些檔案。
@@ -29,29 +29,29 @@ description: 從既有程式碼建立或更新模組層級 AGENTS.md 時使用�
    - 哪些資訊仍需詢問使用者，因為現有資料無法確認。
 3. 將候選內容、查證來源與待確認問題交給使用者。由使用者決定哪些內容要收錄，並修正不符合實際情況的描述。
 4. 更新 `AGENTS.md`：
-   - 將確認要收錄的內容放入下方對應的六個章節。
+   - 將確認要收錄的內容放入下方對應的七個章節。
    - 把文件放在能涵蓋所有受影響檔案的最近一層目錄。只適用於某個子目錄的規則，寫入該子目錄自己的 `AGENTS.md`。
    - 省略沒有內容的章節，並刪除過期、重複、推測而來或工具已能自動保證的內容。
 5. 將完成後的文件內容與適用範圍交給使用者確認。使用者確認後，才算完成更新。
 
-## 輸出模板
+## Output
 
 模板說明放在 `instruction` code fence 中。建立正式 `AGENTS.md` 時，以實際內容取代 instruction block；沒有內容的 heading 連同 instruction block 一起刪除。
 
 ````md
-## Responsibility
+## Scope
 
 ```instruction
 說明模組的主要責任、責任邊界，以及容易被誤認為由它負責的 out of scope。省略完整功能列表、從 exported API 就能看出的內容與實作細節。
 ```
 
-## Mental model
+## Model
 
 ```instruction
 說明必須跨多個檔案才能建立的整體理解，例如資料流、物件與狀態的關係、生命週期，以及狀態持有者與協調者。省略逐檔案介紹、implementation walkthrough 與從單一函式就能看懂的流程。
 ```
 
-## Constraints & Invariants
+## Rules
 
 ```instruction
 記錄限制修改選擇的既有條件（Constraints）與操作完成後資料必須符合的規則（Invariants）。
@@ -71,21 +71,19 @@ Invariants：記錄「每次一件事做完後，資料一定要符合什麼規�
 - 圖書館完成借書後，同一本實體書只能有一位借閱人。標示為「可借閱」的書不得同時留有尚未歸還的借閱紀錄。
 ```
 
-## Gotchas & non-obvious decisions
-
-### Gotchas
+## Risks
 
 ```instruction
 記錄違反一般直覺、容易造成錯誤假設的既有行為，並寫明判斷方式或具體後果。例如 API 無論成功或失敗都回 HTTP 200，必須依 response body 判斷結果。
 ```
 
-### Non-obvious decisions
+## Rationale
 
 ```instruction
 記錄看似可以簡化、共用或重構，實際上受限制而刻意維持的設計。每項內容說明目前做法、限制原因，以及替代做法會造成的後果。省略 coding style、沒有後果的偏好與已失效的歷史背景。
 ```
 
-## Navigation
+## Map
 
 ```instruction
 使用「要修改 X，先看 Y」指出 entry point、決定行為的實作、對應測試與容易漏掉的跨 package 關聯。省略完整目錄樹、所有檔案清單與用 IDE 搜尋即可找到的位置。

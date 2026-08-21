@@ -3,7 +3,7 @@ name: make-id-stable
 description: 設計或審查 requirement、story、ADR、test case、API spec 等長期引用項目的識別碼規則時使用。確保 ID 只表示永久 identity，不受排序、改名、搬移或刪除的連鎖影響。
 ---
 
-## 目的
+## Goal
 
 識別碼只用來表示項目的永久 identity。排序、標題、檔名、路徑、分類、狀態等可變資訊必須分開管理，避免重新排序、搬移、刪除或改名時產生大量連鎖引用修改。
 
@@ -11,7 +11,7 @@ description: 設計或審查 requirement、story、ADR、test case、API spec �
 
 不適用於一次性草稿、臨時筆記，以及沒有跨項目引用的純展示內容：沒有引用者的位置，ID 只是多餘的維護成本。
 
-## 建議格式
+## Output
 
 除非專案已有其他 ID 規則，優先使用沒有業務語意的隨機 ID（opaque）：
 
@@ -34,7 +34,7 @@ TEST-EU7SXKGY
 
 ID 只表示永久 identity；排序、名稱、位置與其他組織資訊另外維護。
 
-## 規則
+## Rules
 
 - ID 建立後永久不變。
 - 已使用過的 ID 永遠不得回收或重新指派。
@@ -96,7 +96,7 @@ requirements/auth/password-reset
 
 這些資訊一旦改變，就可能迫使其他引用一起修改。
 
-## 檢查方式
+## Validation
 
 設計或 review ID 規則時，確認以下操作都不需要修改既有 ID 或無關引用：
 

@@ -39,7 +39,7 @@ description: 將 Figma 畫面整理成可審查的 UI 規格：提出 Section Ou
 | `source-rules.md` | 判斷每個 Section 可以採用哪些資料，以及資料應寫入哪個欄位 |
 | `formal-template.md` | 定義 `.ux.md` 的欄位、類型、排列及編號 |
 
-## 選擇工作流程
+## 判定與分流
 
 | 已知輸入 | 執行流程 |
 | --- | --- |
@@ -178,7 +178,7 @@ description: 將 Figma 畫面整理成可審查的 UI 規格：提出 Section Ou
 
 同步更新 `###` heading、`關聯：`、`受影響 UI 驗收項` 與跨檔 Markdown 連結文字。
 
-## 失敗處理
+## Risks
 
 - Figma URL 缺 node id：建立 Question 或請使用者指定 node，不猜測目標。
 - `get_metadata` 回傳的 XML 不完整：請使用者提供較小的 node，不補寫缺少圖層。
@@ -187,7 +187,7 @@ description: 將 Figma 畫面整理成可審查的 UI 規格：提出 Section Ou
 - Section 沒有 annotation 或有效補充資料：依 `source-rules.md` 保留 Section 標題與來源，不自行推測需求。
 - Annotation 連到其他 Figma node：把 URL 寫入驗證步驟，但不因此讀取該 node 的內容。
 
-## 完成檢查
+## Validation
 
 ### 1. 提出 Section Outline
 

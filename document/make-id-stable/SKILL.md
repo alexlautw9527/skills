@@ -34,7 +34,7 @@ TEST-EU7SXKGY
 
 ID 只表示永久 identity；排序、名稱、位置與其他組織資訊另外維護。
 
-## Rules
+## Constraints
 
 - ID 建立後永久不變。
 - 已使用過的 ID 永遠不得回收或重新指派。

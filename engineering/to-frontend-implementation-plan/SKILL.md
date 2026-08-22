@@ -23,7 +23,7 @@ description: 依功能規格與既有前端 repository 的實際架構，產出�
 
 1. 範圍與依據。
 2. Map。
-3. Rules。
+3. Constraints and Invariants。
 4. Shared Concerns。
 5. 依實作順序排列的 Slices。
 6. Coverage。
@@ -34,7 +34,7 @@ description: 依功能規格與既有前端 repository 的實際架構，產出�
 
 1. **Story**
 2. **Scope**（In Scope / Out of Scope）
-3. **Rules**
+3. **Constraints and Invariants**
 4. **UI Source**
 5. **UI Spec**
 6. **Map**
@@ -72,8 +72,8 @@ description: 依功能規格與既有前端 repository 的實際架構，產出�
 └── 03-<observable-behavior>.md
 ```
 
-- `index.md` 保留 Scope、Map、Rules、Shared Concerns、Slice 順序與相對連結，以及 Coverage。
-- 每個 Slice 檔案只包含該 Slice 的欄位。Map、Rules 與 Shared Concerns 不複製到 Slice 檔案。
+- `index.md` 保留 Scope、Map、Constraints and Invariants、Shared Concerns、Slice 順序與相對連結，以及 Coverage。
+- 每個 Slice 檔案只包含該 Slice 的欄位。Map、Constraints and Invariants 與 Shared Concerns 不複製到 Slice 檔案。
 - Slice 檔名使用 `<兩位數順序>-<observable-behavior>.md`。檔名描述使用者或系統可觀察的行為，不使用 story ID，也不只描述技術層。
 - 調整 Slice 順序時，同步重新命名檔案，並更新 `index.md` 中的編號與相對連結。
 
@@ -149,9 +149,9 @@ Map 不包含：
 - 預計新增、修改或刪除的檔案。
 - 已能從 Slice 的 Story 或 Map 得知的重複敘述。
 
-### 4. 整理 Rules
+### 4. 整理 Constraints and Invariants
 
-這一節集中記錄所有 Slice 都要遵守，或會改變實作選擇的限制。不要在每個 Slice 重複相同內容。
+這一節集中記錄所有 Slice 都要遵守，或會改變實作選擇的限制與不變條件。不要在每個 Slice 重複相同內容。
 
 - **Constraints** 記錄實作時不能跨越的邊界或前置條件，例如 workspace dependency、generated code、狀態歸屬、正式外部介面尚未定案，以及明確不屬於本計畫的範圍。
 - **Invariants** 記錄操作完成後一定要成立的資料或業務規則，例如既有資料不能被重新推導，或數值不能超過已定義的上限。
@@ -166,7 +166,7 @@ Figma 或 UI spec 仍有待確認問題時，計畫不補造行為；標成 Cons
 
 ### 5. 整理 Shared Concerns
 
-當同一套規格或實作分工會出現在兩個以上 Slice 時，在 Rules 之後新增 **Shared Concerns** 一節。規則全文留在 Rules；本節只寫適用 Slice、規格來源，以及程式應抽共用或由各頁自行處理的部分。
+當同一套規格或實作分工會出現在兩個以上 Slice 時，在 Constraints and Invariants 之後新增 **Shared Concerns** 一節。限制與不變條件全文留在 Constraints and Invariants；本節只寫適用 Slice、規格來源，以及程式應抽共用或由各頁自行處理的部分。
 
 列入 Shared Concerns 的判斷：
 
@@ -188,17 +188,17 @@ heading 底下只用下列欄位，順序固定，使用 Markdown 清單：
 
 同一個 concern 可以同時寫共用理解與不共用實作。不要把「必須抽成共用模組」當成預設。不要在 Shared Concerns 列檔案變更，也不要預先規定「共用／不共用」內容屬於哪一種分類。
 
-Rules 與 Shared Concerns 的分工：
+Constraints and Invariants 與 Shared Concerns 的分工：
 
 - **Invariants** 只寫操作完成後一定要成立的規則。
 - **Shared Concerns** 只寫多 Slice 如何共用同一套規格理解與實作邊界。
 - 若某規則只影響單一 Slice，留在該 Slice 的 Scope，不進 Shared Concerns。
 
-各 Slice 若適用 Shared Concerns，在 **Rules** 末尾加一行 `Shared Concerns：<標題>`，只列 heading 文字，不重述五個欄位。
+各 Slice 若適用 Shared Concerns，在 **Constraints and Invariants** 末尾加一行 `Shared Concerns：<標題>`，只列 heading 文字，不重述五個欄位。
 
 ### 6. 依 `to-slices` 切分 Slice
 
-先使用 `to-slices` 判斷 Slice 的行為邊界、是否能獨立驗證與實作順序。本 skill 不重複定義這些切分規則；其結果只用來決定前端計畫的 Slice，最後仍依本 skill 的欄位填寫 Story、Scope、Rules、UI Source、UI Spec 與 Map。
+先使用 `to-slices` 判斷 Slice 的行為邊界、是否能獨立驗證與實作順序。本 skill 不重複定義這些切分規則；其結果只用來決定前端計畫的 Slice，最後仍依本 skill 的欄位填寫 Story、Scope、Constraints and Invariants、UI Source、UI Spec 與 Map。
 
 1. 同一可觀察行為若有兩套仍在使用的實作，放進同一個 Slice。Map 兩邊都要標。
 2. 同一 Story 若含兩個可獨立交付、可獨立觀察的狀態，拆成兩個 Slice。Coverage 要把該 Story 連到所有相關 Slice。
@@ -227,7 +227,7 @@ Rules 與 Shared Concerns 的分工：
 
 Story 與 Map 已能看出邊界時，可省略整欄。省略時不寫「無」。
 
-#### Rules
+#### Constraints and Invariants
 
 - 只列這個 Slice 適用的 Constraint 與 Invariant 編號，不重述全文。
 - 適用 Shared Concerns 時，末尾加一行 `Shared Concerns：<標題>`，只列標題。
@@ -310,7 +310,7 @@ Map 告訴實作者應先閱讀哪些現有程式碼，以及這些位置在目�
 - <要沿用的做法，以及它為何適用>
   - 依據：`<path-or-symbol>`
 
-## Rules
+## Constraints and Invariants
 
 ### Constraints
 
@@ -350,7 +350,7 @@ Map 告訴實作者應先閱讀哪些現有程式碼，以及這些位置在目�
 
 - <由相鄰 Slice 負責，或本計畫排除的部分。>
 
-**Rules**
+**Constraints and Invariants**
 
 - Constraints：`<constraint-id>`。
 - Invariants：`<invariant-id>`。
@@ -407,10 +407,10 @@ Map 告訴實作者應先閱讀哪些現有程式碼，以及這些位置在目�
 - 只記錄目前存在的實作，沒有混入未來檔案、預計修改內容或無關的系統盤點。
 - Existing flow 只描述目前資料如何流動；Existing patterns 只保留跨 Slice 共用的既有做法，兩者沒有重複項目。
 - 現有資料流已提供衍生上限或狀態時，Existing patterns 已寫明沿用入口，而不是讓各畫面重算。
-- 單一 Slice 的既有做法已放入該 Slice 的 Map；強制執行方式與 generated code 限制已放入 Rules。
+- 單一 Slice 的既有做法已放入該 Slice 的 Map；強制執行方式與 generated code 限制已放入 Constraints and Invariants。
 - 跨越多個 repository 的聲明已分別查證；檔案路徑存在，入口與實際處理位置沒有寫反，schema 名稱已核對。
 
-### Rules
+### Constraints and Invariants
 
 - 所有項目都能由功能規格、目前程式碼或使用者指示支持。
 - 跨 Slice 適用的限制集中在這一節，沒有在各 Slice 重複全文。
@@ -426,7 +426,7 @@ Map 告訴實作者應先閱讀哪些現有程式碼，以及這些位置在目�
 - 每個 concern 的 heading 為 `<行為或流程名稱> (<Invariant 編號>)`，且只對應一個 Invariant。
 - 每項都依序包含適用 Slice、規格來源、共用與不共用；觸發條件只在非顯而易見時出現。
 - 沒有跨 Slice 共用項時，已省略整節 Shared Concerns，沒有寫 `None`。
-- 各 Slice 的 Rules 只引用 Shared Concerns 標題，沒有重述全文。
+- 各 Slice 的 Constraints and Invariants 只引用 Shared Concerns 標題，沒有重述全文。
 
 ### Slices
 
@@ -434,7 +434,7 @@ Map 告訴實作者應先閱讀哪些現有程式碼，以及這些位置在目�
 - 同一 Story 若含兩個可獨立交付的可觀察狀態，已拆成不同 Slice，並在 Coverage 列出全部連結。
 - 兩套仍在使用的實作已放進同一個 Slice，Map 兩邊都有標。
 - Slice 依實作順序連續編號，標題、檔名與連結中的編號一致。
-- 每個 Slice 的欄位順序為 Story、Scope、Rules、UI Source、UI Spec、Map；可省略的欄位已整欄省略。
+- 每個 Slice 的欄位順序為 Story、Scope、Constraints and Invariants、UI Source、UI Spec、Map；可省略的欄位已整欄省略。
 - 出現相鄰 Slice 同畫面、Story 被拆、或 UI spec 含排除畫面時，已撰寫 Scope。
 - 每個 Story 都使用穩定 ID 並連到功能規格的對應 heading。
 - 只有已確認的設計來源與 UI spec 才會出現；缺少來源時已省略整個欄位。
@@ -451,7 +451,7 @@ Map 告訴實作者應先閱讀哪些現有程式碼，以及這些位置在目�
 ### 拆檔產出
 
 - 只有使用者明確要求時才拆檔。
-- Map、Rules 與 Shared Concerns 只出現在 `index.md`。
+- Map、Constraints and Invariants 與 Shared Concerns 只出現在 `index.md`。
 - 每個 Slice 檔案只包含該 Slice 的欄位。
 - Slice 檔名描述可觀察行為，編號、順序與 `index.md` 連結一致。
 

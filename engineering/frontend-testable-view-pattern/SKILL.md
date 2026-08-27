@@ -5,6 +5,8 @@ description: "設計或審查不綁定框架、可獨立測試的前端 View 架
 
 以可獨立測試的 View 為目標，依照以下架構規則設計或審查前端程式。允許替換渲染框架與資料來源，不指定狀態管理工具或各層的具體實作形式。
 
+需要判斷責任是否混雜、何時建立擴充位置、如何限制 dependency，或如何指定 state owner 時，讀取 [frontend-solid-pattern](../frontend-solid-pattern/SKILL.md)。本 skill 定義 View、State & Logic、Data Access 與 Data Sources 的資料流與測試邊界；`frontend-solid-pattern` 用來檢查各層內部的模組設計。
+
 View 能單獨測試時，可以得到以下好處：
 
 - 測試只要準備 view data、操作畫面、檢查畫面內容與送出的事件，不必 mock 資料層或網路請求，寫起來快，也不會偶爾莫名其妙失敗。

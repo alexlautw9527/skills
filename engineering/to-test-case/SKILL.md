@@ -1,15 +1,15 @@
 ---
 name: to-test-case
-description: 使用 Vitest、Jest 或專案既有測試框架，產生或審查可執行的 regression test。適用於需要依需求、業務規則或公開介面防止行為回歸的單元、整合、元件與 API 測試；不以 coverage 或內部實作細節為目標。
+description: 使用 Vitest、Jest 或專案既有測試框架，產生或審查可執行的測試。適用於依需求、業務規則、公開介面、已知問題或行為變更，驗證單元、整合、元件與 API 行為；不以 coverage 或內部實作細節為目標。
 ---
 
-產生或審查 regression test 時，以能防止已知或可預見的行為回歸為完成標準。regression test 應驗證呼叫端可觀察的結果；在不改變行為的重構後，測試通常不應失敗。
+產生或審查可執行的測試時，以驗證已確認的預期行為為完成標準。測試可以驗收新功能、保護既有行為、驗證整合邊界，或為已知問題建立回歸保護。測試應驗證呼叫端可觀察的結果；在不改變行為的重構後，測試通常不應失敗。
 
 ## Inputs
 
 開始前取得與本次行為直接相關的材料：
 
-- requirement、sbe、API contract、業務規則或已確認的 bug。
+- requirement、sbe、API contract、業務規則、行為變更或已確認的 bug。
 - 被測程式碼的公開介面、相依關係與既有測試。
 - 專案已安裝的測試框架、測試指令、test environment 與 fixture 慣例。
 - 需要驗證的整合邊界，例如資料庫、HTTP、queue、cache 或檔案系統。
@@ -18,7 +18,7 @@ description: 使用 Vitest、Jest 或專案既有測試框架，產生或審查�
 
 ## Constraints
 
-- 每個 regression test 都要能說明它防止的 failure mode，以及失敗時會造成的可觀察錯誤。
+- 每個測試都要能說明它要驗證的預期行為，或它要防止的 failure mode，以及錯誤時會造成的可觀察結果。
 - assertion 優先驗證回傳值、畫面、HTTP response、持久化後的資料、事件或其他外部 side effect。
 - 不測 private method、內部 state、helper 呼叫順序、沒有 contract 意義的 CSS class，或只為了滿足 coverage 的分支。
 - 測試彼此獨立，不依賴執行順序、前一個案例留下的資料或共用可變 state。
@@ -29,13 +29,13 @@ description: 使用 Vitest、Jest 或專案既有測試框架，產生或審查�
 
 ## Workflow
 
-1. 確認測試範圍
+1. 確認驗證目標
 
-   若材料已定義 Invariant，先以它列出必須持續成立的行為與結果，再補充本次要維持的規則、公開 contract 與已知風險。每項行為寫出錯誤實作時會出現的 failure mode，以及呼叫端可觀察到的結果。
+   若材料已定義 Invariant，先以它列出必須持續成立的行為與結果，再補充本次要驗證的規則、公開 contract、行為變更與已知風險。每項行為寫出預期結果，以及錯誤實作時可能出現的 failure mode 和呼叫端可觀察到的結果。新功能尚未有回歸風險時，仍依已確認的預期結果建立測試。
 
 2. 選擇主要測試層級
 
-   對每個 failure mode，選擇成本最低且足以可靠抓到錯誤的層級：
+   對每個要驗證的行為或 failure mode，選擇成本最低且足以可靠驗證結果的層級：
    - Unit test：純業務規則、計算、資料轉換、validation、條件分支與 boundary condition。
    - Component 或 frontend integration test：使用者輸入、loading、success、empty、error、權限差異，以及 API 結果造成的畫面與互動改變。使用 role、label 或可見文字等使用者可感知的 selector。
    - Backend integration test：資料庫 constraint、transaction、repository 行為、serialization、dependency wiring，或 queue、cache、檔案系統等整合邊界。
@@ -47,9 +47,9 @@ description: 使用 Vitest、Jest 或專案既有測試框架，產生或審查�
 
 3. 呼叫 `$mece` 檢查案例集合
 
-   將「本次要維持的行為、規則與 failure mode」定義為母集合，將每個候選 regression test 視為分析單位，呼叫 `$mece` 檢查：
-   - 每個 failure mode 是否至少有一個案例可驗證。
-   - 兩個案例是否以相同測試層級與 assertion 驗證相同錯誤，因而重複。
+   將「本次要驗證的行為、規則與 failure mode」定義為母集合，將每個候選測試視為分析單位，呼叫 `$mece` 檢查：
+   - 每個要驗證的行為或 failure mode 是否至少有一個案例可驗證。
+   - 兩個案例是否以相同測試層級與 assertion 驗證相同行為或錯誤，因而重複。
    - 同一清單是否混合行為分類、測試層級與資料排列等不同維度。
    - 少量跨層測試是否各自驗證不同 contract 或 integration boundary。
 
@@ -57,7 +57,7 @@ description: 使用 Vitest、Jest 或專案既有測試框架，產生或審查�
 
 4. 撰寫可執行的測試程式碼
 
-   在既有或新增的測試檔中，以目前專案的 Vitest、Jest 或相容 API 撰寫 regression test。每個案例以行為與結果命名，並使用 AAA pattern：
+   在既有或新增的測試檔中，以目前專案的 Vitest、Jest 或相容 API 撰寫測試。每個案例以行為與結果命名，並使用 AAA pattern：
 
    - Arrange：建立輸入、前置狀態與必要 mock。
    - Act：執行一次被測行為。
@@ -85,22 +85,22 @@ description: 使用 Vitest、Jest 或專案既有測試框架，產生或審查�
 5. 測試層級是否足以驗證錯誤發生的位置，且沒有以較高成本層級重複同一規則。
 6. parameterized case、fixture、setup 與 teardown 是否只有資料差異，可抽樣檢查代表案例。
 
-優先重寫或刪除無法指出 failure mode、只增加 coverage、只驗證 mock、assertion 永遠成立、與其他案例重複，或 production code 改錯後仍通過的測試。
+優先重寫或刪除無法指出要驗證的行為或 failure mode、只增加 coverage、只驗證 mock、assertion 永遠成立、與其他案例重複，或 production code 改錯後仍通過的測試。
 
 ## Output
 
 交付下列內容：
 
-- 可執行的 regression test 程式碼，以及每個修改或新增測試檔的位置。
-- 一份精簡的案例對照，列出 regression test 名稱、要防止的 failure mode、測試層級與主要可觀察 assertion。
+- 可執行的測試程式碼，以及每個修改或新增測試檔的位置。
+- 一份精簡的案例對照，列出測試名稱、要驗證的行為或要防止的 failure mode、測試層級與主要可觀察 assertion。
 - 使用 `$mece` 後發現並處理的重複案例、涵蓋缺口或交叉維度。
 - 實際執行的測試指令與結果；若無法執行，說明阻礙與尚未驗證的範圍。
 
 ## Validation
 
-- 每個 regression test 都有可追溯的 failure mode，且 expected result 不依賴目前實作才成立。
+- 每個測試都有可追溯的預期行為、公開 contract 或 failure mode，且 expected result 不依賴目前實作才成立。
 - 每個 assertion 都能證明外部可觀察行為或需要保證的公開 contract。
-- 每個 failure mode 都由最低成本且足夠可靠的測試層級處理。
+- 每個要驗證的行為或 failure mode 都由最低成本且足夠可靠的測試層級處理。
 - `$mece` 已檢查本次案例集合的重複、遺漏、層級與分類維度。
 - 測試獨立執行時可重現，且不依賴其他案例或共享可變 state。
 - 所有測試都以 AAA pattern 分隔前置條件、操作與 assertion；AAA 註解只出現在程式碼或空白行不足以辨識區段的位置。
